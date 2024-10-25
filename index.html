@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Document</title>
+    <script
+  src="https://code.jquery.com/jquery-3.7.1.js"
+  integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+  crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>Shopping Cart</h1>
+    <div>
+        <ul>
+            <li><a class="add-to-cart" href="#" data-name="Buchet bujori" data-price="200">Buchet bujori</a></li>
+            <li><a class="add-to-cart" href="#" data-name="Buchet 3 lalele" data-price="100">Buchet 3 lalele</a></li>
+            <li><a class="add-to-cart" href="#" data-name="Buchet narcise" data-price="150">Buchet narcise</a></li>
+        </ul>
+        <button id="clear-cart">Clear Cart</button?>
+    </div>
+
+    <div>
+        <ul id="show-cart">
+            <!...>
+        </ul>  
+    </div>
+
+    <script>
+        $(".add-to-cart").click(function(event){
+            event.preventDefault();
+            var name = $(this).attr("data-name");
+            var price = Number($(this).attr("data-price"));
+
+            addItemToCart(name, price, 1);
+            displayCart();
+        });
+
+        function displayCart() {
+            console.log("***Display cart***")
+    
+            var cartArray = listCart();
+            console.log("***Count cart***:"+cartArray.length )
+            var output ="";
+            for (var i in cartArray) {
+                output += "<li>"+cartArray[i].name+" "+ cartArray[i].count+"</li>"
+            }
+            $("#show-cart").html(output);
+        }
+
+        //************************************
+        //Shopping cart functions
+        var cart = [];
+
+        var Item = function(name, price, count) {
+            this.name = name;
+            this.price = price;
+            this.count = count;
+        };
+        function addItemToCart(name, price, count) {
+            for (var i in cart){
+                if(cart[i].name === name) {
+                   cart[i].count += count;
+                    return; 
+                }
+
+            }
+            var item = new Item(name, price, count);
+            cart.push(item);
+            saveCart();
+        }
+         // addItemToCart(id, name, price, count)
+       
+
+        function removeItemFromCart(name) {// removeItemFromCart(id) // Removes one item
+            for (var i in cart) {
+               if (cart[i].name === name) {
+                   cart[i].count --;
+                   if (cart[i].count === 0) {
+                     cart.splice(i, 1);
+                   }
+                   break;
+               } 
+            }
+            saveCart();
+        }
+        
+        console.log(cart.length);
+        removeItemFromCart("Buchet bujori");
+        console.log(cart);
+
+
+        //removeItemFromCartAll()
+
+        function removeItemFromCartAll(name) {
+            for (var i in cart) {
+                if (cart[i].name === name);
+                   cart.splice(i,1);
+                   break;
+            }
+        }
+        saveCart();
+    
+
+        addItemToCart("Buchet bujori", 200, 1);
+        addItemToCart("Buchet 3 lalele", 100, 2);
+        addItemToCart("Buchet bujori", 200, 2);
+        addItemToCart("Buchet narcise", 150, 2);
+        addItemToCart("Floarea soarelui", 50, 5);
+
+
+        removeItemFromCartAll("Floarea soarelui");
+        console.log(cart.length);
+        console.log(cart);
+
+//clearCart()
+
+        function clearCart(){
+            cart = [];
+            saveCart();
+        }
+        // clearCart();
+        // console.log(cart);
+
+//countCart() // count/return total nr items//
+        function countCart() {
+            var totalCount = 0;
+            for (var i in cart) {
+                totalCount += cart[i].count;
+            }
+            return totalCount;
+        }
+        console.log(countCart());
+//total cart() -> return total cost
+        function totalCart() {
+            var totalCost = 0;
+            for (var i in cart) {
+                totalCost += cart[i].price;
+            }
+            return totalCost;
+        }
+            console.log(totalCart());
+
+        
+//listCart() -> array with all items
+        function listCart() {
+            var cartCopy = [];
+            for (var i in cart) {
+                var item = cart[i];
+                var itemCopy = {};
+                for (var p in item) {
+                    itemCopy[p] = item[p];
+
+                }
+                cartCopy.push(itemCopy);
+            }
+            return cartCopy;
+    
+        }
+        
+//saveCart -> localstorage
+        function saveCart() {
+            localStorage.setItem("shoppingCart", JSON.stringify(cart));
+        }
+
+
+//loadCart()
+        function loadCart() {
+            cart = JSON.parse(localStorage.getItem("shoppingCart"));
+        }
+        loadCart();
+        displayCart();
+
+
+    </script>
+</body>
+</html>
